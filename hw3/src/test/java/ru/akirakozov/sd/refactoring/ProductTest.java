@@ -9,12 +9,12 @@ import java.sql.*;
 /**
  * @author Yaroslav Ilin
  */
-public abstract class ProductTest {
+public class ProductTest {
     private Thread mainThread;
     protected SqliteConnector sqliteConnector;
 
     @Before
-    public void setUp() throws InterruptedException {
+    public void setUpService() throws InterruptedException {
         sqliteConnector = new SqliteConnector();
         mainThread = new Thread(() -> {
             try {
