@@ -14,7 +14,7 @@ public abstract class ProductTest {
     protected SqliteConnector sqliteConnector;
 
     @Before
-    public void setUp() {
+    public void setUp() throws InterruptedException {
         sqliteConnector = new SqliteConnector();
         mainThread = new Thread(() -> {
             try {
@@ -23,6 +23,7 @@ public abstract class ProductTest {
             }
         });
         mainThread.start();
+        Thread.sleep(1000);
         try (final PreparedStatement st = sqliteConnector.connect().prepareStatement("DELETE FROM PRODUCT;")) {
             st.executeUpdate();
         } catch (SQLException e) {
