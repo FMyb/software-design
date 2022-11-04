@@ -51,7 +51,10 @@ public class QueryProductTest extends ProductTest {
                 .min(Comparator.comparingInt(Map.Entry<String, Integer>::getValue))
                 .orElseThrow();
         HttpClient httpClient = HttpClient.newBuilder().build();
-        HttpRequest httpRequest = HttpRequest.newBuilder().GET().uri(URI.create("http://localhost:8081/query?command=min")).build();
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create(serverUrl() + "/query?command=min"))
+                .build();
         HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
         String result = response.body();
         result = result.replace("<html><body>", "")
@@ -90,7 +93,7 @@ public class QueryProductTest extends ProductTest {
         HttpClient httpClient = HttpClient.newBuilder().build();
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .GET()
-                .uri(URI.create("http://localhost:8081/query?command=max"))
+                .uri(URI.create(serverUrl() + "/query?command=max"))
                 .build();
         HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
         String result = response.body();
@@ -128,7 +131,7 @@ public class QueryProductTest extends ProductTest {
         HttpClient httpClient = HttpClient.newBuilder().build();
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .GET()
-                .uri(URI.create("http://localhost:8081/query?command=sum"))
+                .uri(URI.create(serverUrl() + "/query?command=sum"))
                 .build();
         HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
         String result = response.body();
@@ -147,7 +150,7 @@ public class QueryProductTest extends ProductTest {
         HttpClient httpClient = HttpClient.newBuilder().build();
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .GET()
-                .uri(URI.create("http://localhost:8081/query?command=count"))
+                .uri(URI.create(serverUrl() + "/query?command=count"))
                 .build();
         HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
         String result = response.body();
@@ -165,7 +168,7 @@ public class QueryProductTest extends ProductTest {
         HttpClient httpClient = HttpClient.newBuilder().build();
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .GET()
-                .uri(URI.create("http://localhost:8081/query?command=unexpected"))
+                .uri(URI.create(serverUrl() + "/query?command=unexpected"))
                 .build();
         HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
         String result = response.body();

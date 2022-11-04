@@ -2,7 +2,7 @@ package ru.akirakozov.sd.refactoring;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
+import ru.akirakozov.sd.refactoring.repository.impl.SqliteConnector;
 
 import java.sql.*;
 
@@ -10,20 +10,19 @@ import java.sql.*;
  * @author Yaroslav Ilin
  */
 public class ProductTest {
-    private Thread mainThread;
     protected SqliteConnector sqliteConnector;
+    protected ProductService productService;
+    protected String serverHost = "localhost";
+    protected int serverPort = 15234;
+    protected String serverUrl = String.format("http://%s:%d", serverHost, serverPort);
 
     @Before
-    public void setUpService() throws InterruptedException {
-        sqliteConnector = new SqliteConnector();
-        mainThread = new Thread(() -> {
-            try {
-                Main.main(new String[]{});
-            } catch (Exception ignore) {
-            }
-        });
-        mainThread.start();
-        Thread.sleep(1000);
+    public void setUpService() throws Exception {
+        sqliteConnector = new SqliteConnector("jdbc:sqlite:test.db");
+        productService = new ProductService(sqliteConnector, serverPort);
+        productService.initDatabase();
+        productService.start();
+
         try (final PreparedStatement st = sqliteConnector.connect().prepareStatement("DELETE FROM PRODUCT;")) {
             st.executeUpdate();
         } catch (SQLException e) {
@@ -32,23 +31,11 @@ public class ProductTest {
     }
 
     @After
-    public void tearDown() throws SQLException {
-        sqliteConnector.reset();
-        mainThread.interrupt();
+    public void tearDown() throws Exception {
+        productService.stop();
     }
 
-    static class SqliteConnector {
-        private Connection connection;
-
-        public synchronized Connection connect() throws SQLException {
-            if (connection == null || !connection.isValid(1)) {
-                connection = DriverManager.getConnection("jdbc:sqlite:test.db");
-            }
-            return connection;
-        }
-
-        public void reset() throws SQLException {
-            connection.close();
-        }
+    public String serverUrl() {
+        return serverUrl;
     }
 }

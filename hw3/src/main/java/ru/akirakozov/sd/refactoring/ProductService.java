@@ -3,26 +3,25 @@ package ru.akirakozov.sd.refactoring;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import ru.akirakozov.sd.refactoring.repository.impl.SqliteConnector;
 import ru.akirakozov.sd.refactoring.servlet.AddProductServlet;
 import ru.akirakozov.sd.refactoring.servlet.GetProductsServlet;
 import ru.akirakozov.sd.refactoring.servlet.QueryServlet;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * @author Yaroslav Ilin
  */
 public class ProductService {
-    private final String sqliteAddress;
     private final int serverPort;
-    private Server server;
+    private final Server server;
+    private final SqliteConnector sqliteConnector;
 
-    public ProductService(String sqliteAddress, int serverPort) {
-        this.sqliteAddress = sqliteAddress;
+    public ProductService(SqliteConnector sqliteConnector, int serverPort) {
+        this.sqliteConnector = sqliteConnector;
         this.serverPort = serverPort;
         this.server = new Server(serverPort);
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
@@ -35,7 +34,7 @@ public class ProductService {
     }
 
     public void initDatabase() {
-        try (Connection c = DriverManager.getConnection("jdbc:sqlite:" + sqliteAddress)) {
+        try (Connection c = sqliteConnector.connect()) {
             String sql = "CREATE TABLE IF NOT EXISTS PRODUCT" +
                     "(ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
                     " NAME           TEXT    NOT NULL, " +
@@ -53,7 +52,12 @@ public class ProductService {
         server.start();
     }
 
-    public void stop() throws InterruptedException {
-        server.join();
+    public void stop() throws Exception {
+        try {
+            sqliteConnector.reset();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        server.stop();
     }
 }

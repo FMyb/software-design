@@ -19,8 +19,11 @@ public class AddProductTest extends ProductTest {
     @Test
     public void addProductTest() throws IOException, InterruptedException {
         HttpClient httpClient = HttpClient.newBuilder().build();
-        HttpRequest httpRequest = HttpRequest.newBuilder().GET().uri(URI.create("http://localhost:8081/add-product?name=test1&price=228")).build();
-        HttpResponse<String> response =  httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create(serverUrl() + "/add-product?name=test1&price=228"))
+                .build();
+        HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
         Assert.assertTrue(response.body().contains("OK"));
 
         try (PreparedStatement st = sqliteConnector.connect().prepareStatement("SELECT * FROM PRODUCT;")) {

@@ -23,7 +23,7 @@ public class GetProductsTest extends ProductTest {
     @Test
     public void getEmptyTest() throws IOException, InterruptedException {
         HttpClient httpClient = HttpClient.newBuilder().build();
-        HttpRequest httpRequest = HttpRequest.newBuilder().GET().uri(URI.create("http://localhost:8081/get-products")).build();
+        HttpRequest httpRequest = HttpRequest.newBuilder().GET().uri(URI.create(serverUrl() + "/get-products")).build();
         HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
         String result = response.body();
         Assert.assertEquals(
@@ -56,7 +56,7 @@ public class GetProductsTest extends ProductTest {
         }
 
         HttpClient httpClient = HttpClient.newBuilder().build();
-        HttpRequest httpRequest = HttpRequest.newBuilder().GET().uri(URI.create("http://localhost:8081/get-products")).build();
+        HttpRequest httpRequest = HttpRequest.newBuilder().GET().uri(URI.create(serverUrl() + "/get-products")).build();
         HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
         String result = response.body();
         result = result.replace("<html><body>", "")
