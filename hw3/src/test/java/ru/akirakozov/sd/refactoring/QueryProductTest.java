@@ -13,7 +13,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author Yaroslav Ilin

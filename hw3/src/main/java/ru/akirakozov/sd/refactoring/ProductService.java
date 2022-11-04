@@ -3,7 +3,8 @@ package ru.akirakozov.sd.refactoring;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import ru.akirakozov.sd.refactoring.connector.impl.SqliteConnector;
+import ru.akirakozov.sd.refactoring.connector.Connector;
+import ru.akirakozov.sd.refactoring.repository.ProductStorage;
 import ru.akirakozov.sd.refactoring.servlet.AddProductServlet;
 import ru.akirakozov.sd.refactoring.servlet.GetProductsServlet;
 import ru.akirakozov.sd.refactoring.servlet.QueryServlet;
@@ -16,21 +17,20 @@ import java.sql.Statement;
  * @author Yaroslav Ilin
  */
 public class ProductService {
-    private final int serverPort;
     private final Server server;
-    private final SqliteConnector sqliteConnector;
+    private final Connector sqliteConnector;
 
-    public ProductService(SqliteConnector sqliteConnector, int serverPort) {
+    public ProductService(Connector sqliteConnector, int serverPort, ProductStorage productStorage) {
         this.sqliteConnector = sqliteConnector;
-        this.serverPort = serverPort;
+
         this.server = new Server(serverPort);
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
         server.setHandler(context);
 
-        context.addServlet(new ServletHolder(new AddProductServlet()), "/add-product");
-        context.addServlet(new ServletHolder(new GetProductsServlet()), "/get-products");
-        context.addServlet(new ServletHolder(new QueryServlet()), "/query");
+        context.addServlet(new ServletHolder(new AddProductServlet(productStorage)), "/add-product");
+        context.addServlet(new ServletHolder(new GetProductsServlet(productStorage)), "/get-products");
+        context.addServlet(new ServletHolder(new QueryServlet(productStorage)), "/query");
     }
 
     public void initDatabase() {
