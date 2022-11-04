@@ -1,6 +1,6 @@
 package ru.akirakozov.sd.refactoring;
 
-import ru.akirakozov.sd.refactoring.repository.impl.SqliteConnector;
+import ru.akirakozov.sd.refactoring.connector.impl.SqliteConnector;
 
 /**
  * @author akirakozov

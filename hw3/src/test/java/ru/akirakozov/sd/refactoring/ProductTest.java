@@ -2,7 +2,7 @@ package ru.akirakozov.sd.refactoring;
 
 import org.junit.After;
 import org.junit.Before;
-import ru.akirakozov.sd.refactoring.repository.impl.SqliteConnector;
+import ru.akirakozov.sd.refactoring.connector.impl.SqliteConnector;
 
 import java.sql.*;
 

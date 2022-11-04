@@ -1,4 +1,4 @@
-package ru.akirakozov.sd.refactoring.repository;
+package ru.akirakozov.sd.refactoring.connector;
 
 import java.sql.Connection;
 import java.sql.SQLException;

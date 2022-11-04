@@ -1,6 +1,6 @@
-package ru.akirakozov.sd.refactoring.repository.impl;
+package ru.akirakozov.sd.refactoring.connector.impl;
 
-import ru.akirakozov.sd.refactoring.repository.Connector;
+import ru.akirakozov.sd.refactoring.connector.Connector;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
