@@ -21,6 +21,18 @@ import java.util.stream.Collectors;
  */
 public class GetProductsTest extends ProductTest {
     @Test
+    public void getEmptyTest() throws IOException, InterruptedException {
+        HttpClient httpClient = HttpClient.newBuilder().build();
+        HttpRequest httpRequest = HttpRequest.newBuilder().GET().uri(URI.create("http://localhost:8081/get-products")).build();
+        HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        String result = response.body();
+        Assert.assertEquals(
+                "<html><body>" + System.lineSeparator() + "</body></html>" + System.lineSeparator(),
+                result
+        );
+    }
+
+    @Test
     public void getProductsTest() throws IOException, InterruptedException {
         Map<String, Integer> testProducts = Map.of("test1", 1, "test2", 2, "test3", 3);
         try (PreparedStatement st = sqliteConnector.connect().prepareStatement(
