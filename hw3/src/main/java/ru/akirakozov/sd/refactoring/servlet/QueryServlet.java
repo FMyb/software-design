@@ -3,7 +3,6 @@ package ru.akirakozov.sd.refactoring.servlet;
 import ru.akirakozov.sd.refactoring.model.Product;
 import ru.akirakozov.sd.refactoring.repository.ProductStorage;
 
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -11,7 +10,7 @@ import java.io.IOException;
 /**
  * @author akirakozov
  */
-public class QueryServlet extends HttpServlet {
+public class QueryServlet extends AbstractProductServlet {
     private final ProductStorage productStorage;
 
     public QueryServlet(ProductStorage productStorage) {
@@ -19,40 +18,52 @@ public class QueryServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String command = request.getParameter("command");
+    protected boolean isResponseData() {
+        return true;
+    }
 
+    @Override
+    protected Processor getProcessor(HttpServletRequest request) {
+        String command = request.getParameter("command");
         if ("max".equals(command)) {
             Product product = productStorage.max();
-
-            response.getWriter().println("<html><body>");
-            response.getWriter().println("<h1>Product with max price: </h1>");
-            response.getWriter().println(product.name() + "\t" + product.price() + "</br>");
-            response.getWriter().println("</body></html>");
+            return response -> processMaxProduct(response, product);
         } else if ("min".equals(command)) {
             Product product = productStorage.min();
-            response.getWriter().println("<html><body>");
-            response.getWriter().println("<h1>Product with min price: </h1>");
-            response.getWriter().println(product.name() + "\t" + product.price() + "</br>");
-            response.getWriter().println("</body></html>");
+            return response -> processMinProduct(response, product);
         } else if ("sum".equals(command)) {
             int sum = productStorage.sum();
-            response.getWriter().println("<html><body>");
-            response.getWriter().println("Summary price: ");
-            response.getWriter().println(sum);
-            response.getWriter().println("</body></html>");
+            return response -> processSum(response, sum);
         } else if ("count".equals(command)) {
             int count = productStorage.count();
-            response.getWriter().println("<html><body>");
-            response.getWriter().println("Number of products: ");
-            response.getWriter().println(count);
-            response.getWriter().println("</body></html>");
-        } else {
-            response.getWriter().println("Unknown command: " + command);
+            return response -> processCount(response, count);
         }
+        return null;
+    }
 
-        response.setContentType("text/html");
-        response.setStatus(HttpServletResponse.SC_OK);
+    @Override
+    protected void processBadRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.getWriter().println("Unknown command: " + request.getParameter("command"));
+    }
+
+    private void processMaxProduct(HttpServletResponse response, Product product) throws IOException {
+        response.getWriter().println("<h1>Product with max price: </h1>");
+        writeProduct(response, product);
+    }
+
+    private void processMinProduct(HttpServletResponse response, Product product) throws IOException {
+        response.getWriter().println("<h1>Product with min price: </h1>");
+        writeProduct(response, product);
+    }
+
+    private void processSum(HttpServletResponse response, int sum) throws IOException {
+        response.getWriter().println("Summary price: ");
+        response.getWriter().println(sum);
+    }
+
+    private void processCount(HttpServletResponse response, int count) throws IOException {
+        response.getWriter().println("Number of products: ");
+        response.getWriter().println(count);
     }
 
 }
