@@ -1,0 +1,26 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<head>
+    <title>Boards</title>
+</head>
+
+<body>
+<table>
+    <th:block th:each="board : ${boards}">
+        <tr>
+            <td><a th:href="@{/tasks/{board_id}(board_id=${board.boardId})}" th:text="${board.name}"></a></td>
+            <td>
+                <form action="#" th:action="@{/(board_id=${board.boardId})}" th:method="delete" style="margin-top: 0.5rem">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+    </th:block>
+</table>
+
+
+<form action="#" th:action="@{/}" th:object="${board_create}" method="post">
+    <p>BoardName: <input type="text" th:field="*{name}"></p>
+    <p><input type="submit" value="Add board"/></p>
+</form>
+</body>
